@@ -1,0 +1,82 @@
+10. server 相关命令
+    
+    bgsave
+        BGSAVE 命令执行之后立即返回 OK ，然后 Redis fork 出一个新子进程，原来的 Redis 进程(父进程)继续处理客户端请求，而子进程则负责将数据保存到磁盘，然后退出。
+
+    CLIENT GETNAME
+        返回 CLIENT SETNAME 命令为连接设置的名字。
+        因为新创建的连接默认是没有名字的， 对于没有名字的连接， CLIENT GETNAME 返回空白回复。
+        返回值
+            如果连接没有设置名字，那么返回空白回复；
+            如果有设置名字，那么返回名字。
+
+    CLIENT KILL ip:port
+        关闭地址为 ip:port 的客户端。
+        ip:port 应该和 CLIENT LIST 命令输出的其中一行匹配。
+        因为 Redis 使用单线程设计，所以当 Redis 正在执行命令的时候，不会有客户端被断开连接。
+        如果要被断开连接的客户端正在执行命令，那么当这个命令执行之后，在发送下一个命令的时候，
+        它就会收到一个网络错误，告知它自身的连接已被关闭。
+        返回值
+            当指定的客户端存在，且被成功关闭时，返回 OK 。
+
+    CLIENT LIST
+        以人类可读的格式，返回所有连接到服务器的客户端信息和统计数据。
+        参考:  http://doc.redisfans.com/server/client_list.html
+
+    CLIENT SETNAME connection-name
+        为当前连接分配一个名字。
+        这个名字会显示在 CLIENT LIST 命令的结果中， 用于识别当前正在与服务器进行连接的客户端。
+
+    CONFIG GET parameter
+        CONFIG GET 命令用于取得运行中的 Redis 服务器的配置参数(configuration parameters)，
+        CONFIG GET 接受单个参数 parameter 作为搜索关键字，查找所有匹配的配置参数，其中参数和值以“键-值对”(key-value pairs)的方式排列。
+        比如执行 CONFIG GET s* 命令，服务器就会返回所有以 s 开头的配置参数及参数的值
+
+    CONFIG RESETSTAT
+        重置 INFO 命令中的某些统计数据，包括：
+        Keyspace hits (键空间命中次数)
+        Keyspace misses (键空间不命中次数)
+        Number of commands processed (执行命令的次数)
+        Number of connections received (连接服务器的次数)
+        Number of expired keys (过期key的数量)
+        Number of rejected connections (被拒绝的连接数量)
+        Latest fork(2) time(最后执行 fork(2) 的时间)
+        The aof_delayed_fsync counter(aof_delayed_fsync 计数器的值)
+        返回值：
+            总是返回 OK 
+
+    CONFIG REWRITE
+        CONFIG REWRITE 命令对启动 Redis 服务器时所指定的 redis.conf 文件进行改写： 因为 CONFIG SET 命令可以对服务器的当前配置进行修改， 而修改后的配置可能和 redis.conf 文件中所描述的配置不一样， CONFIG REWRITE 的作用就是通过尽可能少的修改， 将服务器当前所使用的配置记录到 redis.conf 文件中。
+
+    CONFIG SET parameter value
+        CONFIG SET 命令可以动态地调整 Redis 服务器的配置(configuration)而无须重启。
+        你可以使用它修改配置参数，或者改变 Redis 的持久化(Persistence)方式。
+        CONFIG SET 可以修改的配置参数可以使用命令 CONFIG GET * 来列出，所有被 CONFIG SET 修改的配置参数都会立即生效。
+        返回值：
+            当设置成功时返回 OK ，否则返回一个错误。
+    DBSIZE
+        返回当前数据库的 key 的数量。
+
+    FLUSHALL
+        清空整个 Redis 服务器的数据(删除所有数据库的所有 key )。
+        此命令从不失败。
+        返回值：
+            总是返回 OK 。
+
+    FLUSHDB
+        清空当前数据库中的所有 key。
+        此命令从不失败。
+
+    INFO [section]
+        以一种易于解释（parse）且易于阅读的格式，返回关于 Redis 服务器的各种信息和统计数值。
+        参考:  http://doc.redisfans.com/server/info.html
+
+    LASTSAVE
+        返回最近一次 Redis 成功将数据保存到磁盘上的时间，以 UNIX 时间戳格式表示。
+
+    MONITOR
+        实时打印出 Redis 服务器接收到的命令，调试用。
+
+    
+
+
